@@ -1,0 +1,5 @@
+build/
+*.pdf
+.DS_Store
+*.out
+*.out.dSYM/

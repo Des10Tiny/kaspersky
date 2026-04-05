@@ -11,4 +11,4 @@ fetchcontent_makeavailable(googletest)
 add_executable(client_tests test_client/client_tests.cpp ../src/client/client.cpp)
 
 target_include_directories(client_tests PRIVATE ../src/client)
-target_link_libraries(client_tests gtest gtest_main pthread)
+target_link_libraries(client_tests common gtest gtest_main pthread)

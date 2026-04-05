@@ -6,7 +6,7 @@
 SocketFD::SocketFD() {
     fd_ = socket(AF_INET, SOCK_STREAM, 0);
     if (fd_ < 0) {
-        throw std::runtime_error("Error: invalid TCP || TCP not initialized");
+        throw std::runtime_error("Socket Error: invalid TCP || TCP not initialized");
     }
 }
 

@@ -17,7 +17,7 @@ void Client::send_file(const std::string& file_path) {
     while (bytes_left > 0) {
         ssize_t sent = send(sock_.get(), data_ptr + total_sent, bytes_left, 0);
         if (sent < 0) {
-            throw std::runtime_error("Error: send to server wasn't complete");
+            throw std::runtime_error("Client Error: send to server wasn't complete");
         }
         total_sent += sent;
         bytes_left -= sent;
@@ -36,7 +36,7 @@ std::string Client::receive_result() {
     }
 
     if (bytes_received < 0) {
-        throw std::runtime_error("Error: server doesn't response");
+        throw std::runtime_error("Client Error: server doesn't response");
     }
 
     return result;
@@ -53,7 +53,7 @@ void Client::connect_to_server(const std::string& ip, int port) {
 
     if (connect(sock_.get(), reinterpret_cast<struct sockaddr*>(&serv_addr), sizeof(serv_addr)) <
         0) {
-        throw std::runtime_error("Error: cannot connect to server || maybe port is invalid");
+        throw std::runtime_error("Client Error: cannot connect to server || maybe port is invalid");
     }
 }
 
@@ -61,7 +61,7 @@ std::string Client::read_file_content(const std::string& file_path) const {
     std::ifstream file(file_path);
 
     if (!file.is_open()) {
-        throw std::runtime_error("Error: file cannot be opened " + file_path);
+        throw std::runtime_error("Client Error: file cannot be opened " + file_path);
     }
 
     std::ostringstream ss;

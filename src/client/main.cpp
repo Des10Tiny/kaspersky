@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
         port = std::stoi(argv[2]);
 
     } catch (const std::exception&) {
-        std::cerr << "Error: port is invalid \n";
+        std::cerr << "Client Error: port is invalid \n";
 
         return EXIT_FAILURE;
     }

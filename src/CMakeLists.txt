@@ -8,4 +8,4 @@ add_executable(client client/main.cpp client/client.cpp)
 # add_executable(statistics statistics/main.cpp)
 
 target_link_libraries(client PRIVATE common)
-target_include_directories(client PRIVATE src/client)
+target_include_directories(client PRIVATE client)

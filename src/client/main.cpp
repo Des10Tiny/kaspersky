@@ -24,9 +24,9 @@ int main(int argc, char* argv[]) {
 
     try {
         Client client(ip_for_client, port);
-        std::cout << "Connection established.\n Sending the file for verification...\n";
+        std::cout << "Connection established.\nSending the file for verification...\n";
         client.send_file(file_path);
-        std::cout << "The file has been sent.\n Waiting for scan results...\n";
+        std::cout << "The file has been sent.\nWaiting for scan results...\n";
         std::string result = client.receive_result();
         std::cout << "\n ------------- Report from Server -------------\n" << result << "\n";
 

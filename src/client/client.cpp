@@ -15,10 +15,13 @@ void Client::send_file(const std::string& file_path) {
     size_t bytes_left = content.size();
 
     while (bytes_left > 0) {
-        ssize_t sent = send(sock_.get(), data_ptr + total_sent, bytes_left, 0);
+        size_t chunk_size = std::min(bytes_left, static_cast<size_t>(10 * 1024 * 1024));
+        ssize_t sent = send(sock_.get(), data_ptr + total_sent, chunk_size, 0);
+
         if (sent < 0) {
-            throw std::runtime_error("Client Error: send to server wasn't complete");
+            throw std::runtime_error(std::string("Client Error: send failed - ") + strerror(errno));
         }
+        
         total_sent += sent;
         bytes_left -= sent;
     }

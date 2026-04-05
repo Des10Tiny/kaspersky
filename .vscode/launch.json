@@ -26,6 +26,15 @@
             "preLaunchTask": "cmake_build"
         },
         {
+            "name": "Debug Test for Server",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/tests/server_tests",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "cmake_build"
+        },
+        {
             "name": "Debug Statistics",
             "type": "lldb",
             "request": "launch",

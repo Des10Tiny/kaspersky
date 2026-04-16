@@ -1,69 +1,67 @@
 # NetGrep
 
-Высокопроизводительный клиент-серверный сервис для параллельного поиска текстовых сигнатур в больших файлах. Написан на C++20 с использованием POSIX-сокетов, многопроцессной архитектуры (fork) и lock-free статистики через разделяемую память (Shared Memory)
+English | [Russian](./README_ru.md)
 
-## 🚀 Архитектурные решения
+A high-performance client-server service for concurrent text signature matching in large files. Written in C++20 using POSIX sockets, multi-process architecture (`fork`), and lock-free statistics via Shared Memory.
 
-Проект состоит из трех независимых компонентов: Клиент, Сервер и Утилита статистики
+## 🚀 Architectural Decisions
 
-- **Работа с памятью и сетью:** Для упрощения алгоритма поиска вирусов (чтобы не обрабатывать "разрывы" сигнатур на стыках сетевых чанков), файл читается в оперативную память целиком (в `std::string`). Однако, отправка по сети строго чанкирована (кусками по 10 МБ). Это решает проблему внутренних лимитов ядра macOS/Linux на максимальный размер буфера в системном вызове `send()` (ошибка `EINVAL` на гигабайтных файлах). Сервер принимает данные буфером в 64 КБ для минимизации переключений контекста (Context Switch).
+The project consists of three independent components: Client, Server, and Statistics Utility.
 
-- **Многопроцессность:** Сервер использует классическую модель `fork()` на каждое новое входящее соединение. Дочерние процессы сканируют файлы параллельно и независимо друг от друга. Безопасное закрытие дескрипторов реализовано через собственную RAII-обертку `SocketFD`.
+- **Memory and Network:** To simplify the virus search algorithm (to avoid handling signature "breaks" at the boundaries of network chunks), the file is read entirely into RAM (into `std::string`). However, network transmission is strictly chunked (in 10 MB pieces). This solves the macOS/Linux kernel internal limits on the maximum buffer size in the `send()` system call (`EINVAL` error on gigabyte files). The server receives data using a 64 KB buffer to minimize context switches.
 
-- **Lock-free Статистика:** Воркеры записывают результаты сканирования в POSIX Shared Memory (`shm_open` + `mmap`), используя `std::atomic`. Утилита `statistics` может в любой момент подключиться к этому именованному сегменту памяти и прочитать актуальные данные в реальном времени, вообще не блокируя работу основного сервера.
+- **Multi-processing:** The server uses the classic `fork()` model for each new incoming connection. Child processes scan files concurrently and independently of each other. Safe descriptor closure is implemented through a custom RAII wrapper, `SocketFD`.
 
-- **Тестирование (GTest):** Написаны End-to-End интеграционные тесты. Тестовый сервер поднимается в отдельном потоке и биндится на динамически выделенный ОС свободный порт (порт `0`), что предотвращает конфликты (Address already in use) при параллельном запуске пайплайнов в CI/CD (GitHub Actions).
+- **Lock-free Statistics:** Workers write scanning results to POSIX Shared Memory (`shm_open` + `mmap`) using `std::atomic`. The `statistics` utility can connect to this named memory segment at any time and read the current data in real-time, completely without blocking the main server's operation.
 
-## 🛠 Сборка проекта
+- **Testing (GTest):** End-to-End integration tests have been written. The test server is spun up in a separate thread and binds to a dynamically allocated free port by the OS (port `0`), which prevents conflicts (Address already in use) during parallel pipeline execution in CI/CD (GitHub Actions).
 
-Проект использует CMake
+## 🛠 Build Instructions
 
-Поддерживается сборка на Linux и macOS
+The project uses CMake. Building on Linux and macOS is supported.
 
 ```bash
-# Клонирование и переход в папку
+# Clone and navigate to the directory
 git clone git@github.com:Des10Tiny/NetGrep.git
 cd NetGrep
 
-# Генерация и сборка (Release с максимальной оптимизацией)
+# Generate and build (Release with max optimization)
 cmake -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j $(nproc)
+cmake --build build --parallel
 ```
 
-💻 Использование
+## 💻 Usage
 
-1. Запуск сервера
-
-   Сервер принимает порт и путь к файлу конфигурации с вирусными сигнатурами (каждая сигнатура с новой строки)
+**Start the server**
+The server takes a port and a path to the configuration file with virus signatures (each signature on a new line).
 
 ```bash
 ./build/src/server 8080 ./tests/test_server/data/config.txt
 ```
 
-2. Отправка файла (Клиент)
-
-   Отправляем файл на проверку
-   Клиент дождется ответа и выведет вердикт (Clean / Infected)
+**Send a file (Client)**
+Send a file for scanning. The client will wait for the response and output the verdict (Clean / Infected).
 
 ```bash
 ./build/src/client ./tests/test_client/data/infected.txt 8080
 ```
 
-3. Просмотр статистики
-
-   Выводит агрегированную информацию по всем проверенным файлам без прерывания работы сервера
+**View statistics**
+Outputs aggregated information on all scanned files without interrupting the server.
 
 ```bash
 ./build/src/statistics ./tests/test_server/data/config.txt
 ```
 
-🧪 Запуск тестов
+## 🧪 Running Tests
 
-Тесты написаны с использованием Google Test.
+Tests are written using Google Test.
 
 ```bash
 cd build
 ctest --output-on-failure
 ```
 
-🔗 GitHub Repository: [Des10Tiny](https://github.com/Des10Tiny)
+---
+
+🔗 **GitHub Repository:** [Des10Tiny](https://github.com/Des10Tiny)

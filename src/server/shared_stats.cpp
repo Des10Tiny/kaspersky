@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <stdexcept>
 
-const char* shm_name = "/kaspersky_shm";
+const char* shm_name = "/main_shm";
 
 SharedStats::SharedStats(size_t num_patterns, bool is_server)
     : num_patterns_(num_patterns), is_server_(is_server) {

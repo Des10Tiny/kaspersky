@@ -1,8 +1,6 @@
-# Network Anti-Virus Scanner
+# NetGrep
 
-Прототип клиент-серверного антивирусного сканера
-
-Проект написан на C++20 с использованием сырых POSIX-сокетов, системных вызовов Unix и разделяемой памяти
+Высокопроизводительный клиент-серверный сервис для параллельного поиска текстовых сигнатур в больших файлах. Написан на C++20 с использованием POSIX-сокетов, многопроцессной архитектуры (fork) и lock-free статистики через разделяемую память (Shared Memory)
 
 ## 🚀 Архитектурные решения
 
@@ -24,8 +22,8 @@
 
 ```bash
 # Клонирование и переход в папку
-git clone git@github.com:Des10Tiny/kaspersky.git
-cd kaspersky
+git clone git@github.com:Des10Tiny/NetGrep.git
+cd NetGrep
 
 # Генерация и сборка (Release с максимальной оптимизацией)
 cmake -B build -DCMAKE_BUILD_TYPE=Release
